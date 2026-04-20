@@ -18,9 +18,7 @@ def check_input():
 
     return filepath
 
-def main():
-    filepath = check_input()
-
+def convert_songs(filepath):
     try:
         os.mkdir('output')
     except FileExistsError:
@@ -34,6 +32,10 @@ def main():
             slash_i = opus_filepath.rfind('/')
             os.makedirs(opus_filepath[:slash_i], exist_ok=True)
             os.system(f'ffmpeg -i "{full_path}" "{opus_filepath}"')
+
+def main():
+    filepath = check_input()
+    convert_songs(filepath)
 
 if __name__ == '__main__':
     main()
