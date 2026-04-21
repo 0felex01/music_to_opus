@@ -2,6 +2,13 @@ import os
 import sys
 import subprocess
 
+AUDIO_EXTENSIONS = {
+    "mp3", "wav", "flac", "aac", "ogg", "wma", "m4a",
+    "alac", "aiff", "ape", "amr",
+    "MP3", "WAV", "FLAC", "AAC", "OGG", "WMA", "M4A",
+    "ALAC", "AIFF", "APE", "AMR"
+}
+
 def check_input():
     filepath = ''
 
@@ -27,13 +34,21 @@ def convert_songs(filepath):
 
     for dirpath, _, files in os.walk(filepath):
         for file in files:
-            full_path = dirpath + '/' + file
-            dot_i = full_path.rfind('.')
-            opus_filepath = 'output/' + full_path[:dot_i] + '.opus'
+            full_filepath = dirpath + '/' + file
+            dest_filepath = 'output/' + full_filepath
+            dot_i = dest_filepath.rfind('.')
+            opus_filepath = dest_filepath[:dot_i] + '.opus'
             slash_i = opus_filepath.rfind('/')
             os.makedirs(opus_filepath[:slash_i], exist_ok=True)
-            # os.system(f'ffmpeg -i "{full_path}" "{opus_filepath}"')
-            command = ['ffmpeg', '-i', full_path, opus_filepath]
+
+            extension = dest_filepath[dot_i + 1:]
+            command = []
+            match extension:
+                case _ if extension in AUDIO_EXTENSIONS:
+                    command = ['ffmpeg', '-i', full_filepath, opus_filepath]
+                case _:
+                    command = ['cp', full_filepath, dest_filepath]
+
             print(command)
             subprocess.run(command, check=False)
 
