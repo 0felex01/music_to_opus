@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 
 def check_input():
     filepath = ''
@@ -24,14 +25,17 @@ def convert_songs(filepath):
     except FileExistsError:
         pass
 
-    for dirpath, dirs, files in os.walk(filepath):
+    for dirpath, _, files in os.walk(filepath):
         for file in files:
             full_path = dirpath + '/' + file
             dot_i = full_path.rfind('.')
             opus_filepath = 'output/' + full_path[:dot_i] + '.opus'
             slash_i = opus_filepath.rfind('/')
             os.makedirs(opus_filepath[:slash_i], exist_ok=True)
-            os.system(f'ffmpeg -i "{full_path}" "{opus_filepath}"')
+            # os.system(f'ffmpeg -i "{full_path}" "{opus_filepath}"')
+            command = ['ffmpeg', '-i', full_path, opus_filepath]
+            print(command)
+            subprocess.run(command, check=False)
 
 def main():
     filepath = check_input()
